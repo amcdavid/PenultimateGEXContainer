@@ -1,0 +1,22 @@
+---
+title: "Example of import from ArrayExpress using Biobase"
+author: "Andrew McDavid"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Habib 2016 data
+```{r}
+library(Biobase)
+library(ArrayExpress)
+habib_ae = getAE('GSE85721')
+sdrf <- Biobase::read.AnnotatedDataFrame(habib_ae$sdrf, habib_ae$path,  blank.lines.skip = TRUE, fill = TRUE, varMetadata.char = "$", quote = "\"")
+expdat = ArrayExpress:::readExperimentData(habib_ae$idf, habib_ae$path)
+```
+
+We'd need to parse some of the array express data to get a link
+back to the protocols and SRA #
