@@ -1,11 +1,7 @@
 context('Class construction')
 test_that('Can create empty class', {
-    pgex <- PGEXContainer()
-    expect_is(pgex, 'PGEXContainer')
-    expect_equal(pgex@pgexVersion, as.character(packageVersion('PenultimateGEXContainer')))
+    pgex <- new("PGEXContainerProto")
+    expect_is(pgex, 'PGEXContainerProto')
+    expect_equal(pgex@pgex_version, as.character(packageVersion('PenultimateGEXContainer')))
     })
 
-test_that('Can create simple class', {
-    
-    expect_is(PGEXContainer(), 'PGEXContainer')
-    })

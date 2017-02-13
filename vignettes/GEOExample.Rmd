@@ -13,9 +13,13 @@ vignette: >
 ```{r}
 library(Biobase)
 library(ArrayExpress)
+library(GEOquery)
 habib_ae = getAE('GSE85721')
 sdrf <- Biobase::read.AnnotatedDataFrame(habib_ae$sdrf, habib_ae$path,  blank.lines.skip = TRUE, fill = TRUE, varMetadata.char = "$", quote = "\"")
 expdat = ArrayExpress:::readExperimentData(habib_ae$idf, habib_ae$path)
+
+geo <- getGEO('GSE85721')
+se <- makeSummarizedExperimentFromExpressionSet(geo[[1]])
 ```
 
 We'd need to parse some of the array express data to get a link
