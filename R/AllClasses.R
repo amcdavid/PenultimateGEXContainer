@@ -31,11 +31,20 @@ setClass('PGEXContainerProto',
          prototype=list(pgex_version=as.character(packageVersion('PenultimateGEXContainer'))),
          validity=.PGEXProtoValidity)
 
+format_schema_err <- function(src, x){
+    paste0(src, " doesn't follow schema: ", lapply(names(x), function(y) paste0(y, ' ("',  x[y], '") ')))
+}
+
+format_missing_err <- function(src, x){
+    paste0(src, " is missing: ", x)
+}
+
+
 .PGEXValidity <- function(object){
-    if(any(lacking <- lacks_mandatory(colData(object),  pgex_sample))) return("colData(object) lacks some fields")
-    if(any(violates <- violates_schema(colData(object),  pgex_sample))) return("colData(object) doesn't follow scheme")
-    if(any(lacking <- lacks_mandatory(object@pgex_experiment,  pgex_sample))) return("object lacks some fields")
-    if(any(violates <- violates_schema(object@pgex_experiment,  pgex_sample))) return("object lacks some fields")
+    if(length(lacking <- lacks_mandatory(colData(object),  sample_schema))>0) return(format_missing_err("colData(object)", lacking))
+    if(length(violates <- violates_schema(colData(object),  sample_schema))>0) return(format_schema_err("colData(object)", violates))
+    if(length(lacking <- lacks_mandatory(object@pgex_experiment,  experiment_schema))>0) return(format_missing_err("object@pgex_experiment", lacking))
+    if(length(violates <- violates_schema(object@pgex_experiment,  experiment_schema))>0) return(format_schema_err("object@pgex_experiment", violates))
     return(TRUE)
 }
 

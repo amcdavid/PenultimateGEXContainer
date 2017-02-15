@@ -3,51 +3,75 @@
 ##' A \code{PGEXContainerProto} is a \code{PGEXContainer} that has not had its fields validated for consistency and validity.
 ##' This allows step-wise construction.
 ##' @return object of class \code{PGEXContainerProto}
-##' @import data.table
-##' @examples
-##' \dontrun{
-##' library(GEOquery)
-##' geoexp <- getGEO('GSE42268')
-##' se <- makeSummarizedExperimentFromExpressionSet(geoexp[[1]])
-##' }
-##' library(SummarizedExperiment)
-##' se <- readRDS(system.file("tests", "testthat", "GSE42268_SummarizedExperiment.rds",
-##' package='PenultimateGEXContainer'))
-##' batch  <- rep(1, ncol(se))
-##' biosample <- colData(se)$characteristics_ch1
-##' rna_pg <-  colData(se)$characteristics_ch1.2
-##' ncells_maybe  <- colData(se)$characteristics_ch1.1
-##' ncells <- rep(NA_real_, length(ncells_maybe))
-##' ncells[grepl('single cell', ncells_maybe)] <- 1
-##' ncells[grepl('50 cells', ncells_maybe) ] <- 50
-##' ncells[grepl('12 cells', ncells_maybe)] <- 12
-##' cell_cycle_maybe <- colData(se)$characteristics_ch1.3
-##' pgex_sample <- DataFrame(batch=batch, biosample=biosample, ncells=ncells, )
-##' cont <- PGEXContainerProto(se, geoSoft=colData(se))
+##' @export
+##' @example tests/testthat/helper-PGEXContainer.R
+##' @param summarizedExperiment \code{SummarizedExperiment}, currently mandatory
+##' @param pgex_experiment mandatory experiment data
+##' @param pgex_sample optional experiment data to populate \code{colData(summarizedExperiment)}
+##' @param geo_soft optional GEO data
+##' @param ae_idf optional ArrayExpress
+##' @param ae_sdrf optional ArrayExpress
+##' @param fdata feature data (ignored)
+##' @param exprs expression data (ignored)
+##' @rdname PGEXContainerProto-fun
 PGEXContainerProto <- function(summarizedExperiment=NULL, pgex_experiment=NULL, pgex_sample=NULL, geo_soft=NULL, ae_idf=NULL, ae_sdrf=NULL, fdata=NULL, exprs=NULL){
     kv <- guess_keys(summarizedExperiment, pgex_sample, geo_soft, ae_sdrf)
     ## Want tables with common keys or keyed by row order
     ## guess keys/number of samples.
-    cd <- .DataFrame(summarizedExperiment, pgex_sample, cdata, exprs)
     if(!is.null(summarizedExperiment)){
         #if(! (is.null(exprs) && is.null(cdata) && is.null(fdata))) stop("Cannot provided both `summarizedExperiment` and `exprs` or `cdata` or `fdata`.")
     }
     if(is.null(geo_soft)) geo_soft <- DataFrame()
     if(is.null(ae_sdrf)) ae_sdrf <- DataFrame()
-    if(is.null(pgex_experiment)) pgex_experiment <- new('PGEXExperimentMeta')
-
-    MIAMEed <- NULL
-    if(any(hasMIAME <- sapply(metadata(summarizedExperiment), inherits, 'MIAME'))){
-        MIAMEed <- metadata(summarizedExperiment)[[which(hasMIAME)]]
+    if(is.null(pgex_experiment)){
+        pgex_experiment <- new('PGEXExperimentMeta')
+    } else{
+        pgex_experiment <- as(pgex_experiment, "PGEXExperimentMeta")
     }
-    
+
+    ## strip structed metadata
+    MIAMEed <- NULL
+    if(length(whichMIAME <- which_MIAME(metadata(summarizedExperiment)))>0){
+        MIAMEed <- metadata(summarizedExperiment)[[whichMIAME]]
+        metadata(summarizedExperiment)[[which(hasMIAME)]] <- NULL
+    }
+
+    if(!is.null(pgex_sample)){
+        colData(summarizedExperiment) <- cbind_unique(pgex_sample, colData(summarizedExperiment))
+    }
     new('PGEXContainerProto', summarizedExperiment, geo=geo_soft, ae=ae_sdrf, MIAMEed=MIAMEed, pgex_experiment=pgex_experiment)
 }
+
+##' @describeIn PGEXContainerProto-fun Promote an object to a full-fledged (validity checked) PGEXContainer
+##' @examples
+##' PGEX_promote(proto)
+##' @export
+##' @param obj \code{PGEXContainerProto}
+PGEX_promote <- function(obj){
+    obj <- as(obj, 'PGEXContainer')
+    validObject(obj)
+    obj
+}
+
+# cbind, removing duplicated columns
+cbind_unique <- function(...){
+    maybe <- cbind(...)
+    dups <- duplicated(t(as.matrix(maybe)))
+    maybe[,!dups,drop=FALSE]
+}
+
+which_MIAME <- function(x){
+    emptyMIAME <- MIAME()
+    which(sapply(x, function(y) inherits(y, 'MIAME') && !all.equal(y, emptyMIAME)))
+}
+
+
 
 eval_or_NAnull <- function(x, FUN){
     if(!is.function(FUN)) FUN <- eval(FUN)
     if(is.null(x) || is.null(FUN(x))) NA else FUN(x)
-    }
+}
+
 dimnames_or_name <- function(x, FUN){
     if(is.null(x)) return(NA)
     if(FUN==quote(nrow)){
@@ -69,11 +93,17 @@ guess_keys <- function(summarizedExperiment, pgex_sample, geo_soft, ae_sdrf){
 }
 
 guessAeCovariates <- guessGeoCovariates <- function(x) NULL
-is_invariant <- function(x) length(unique(x))==1
+is_variant <- function(x) length(unique(x))>1
 
-prepData <- function(df){
-    invariantCols <- sapply(df, is_invariant)
-    list(df=df[,!invariantCols,drop=FALSE], constants=df[1,invariantCols,drop=TRUE])
+##' Separate variant and invariant columns
+##'
+##' Pull off columns from a \code{data.frame} that are constant
+##' @param df \code{data.frame}
+##' @return \code{list} with entries \code{data.frame} \code{variant} and named list \code{constants}
+##' @export
+split_invariant <- function(df){
+    variantCols <- sapply(df, is_variant)
+    list(variant=df[,variantCols,drop=FALSE], constants=df[1,!variantCols,drop=TRUE])
 }
 
 ## Make a DataFrame preferentially from the arguments in order listed
@@ -83,7 +113,7 @@ prepData <- function(df){
     } else if(!missing(pgex_sample)){
         return(as(pgex_sample, 'DataFrame'))
     } else if(!missing(cdata)){
-        return(as(cdata, 'Data.Frame'))
+        return(as(cdata, 'DataFrame'))
     } else if(!missing(exprs)){
         return(DataFrame(row.names=colnames(exprs)))
     } 
@@ -95,4 +125,13 @@ setMethod('[', list(x='PGEXContainerProto', i='ANY', j='ANY', drop='ANY'), funct
     ans@geo <- x@geo[i,j,,drop=drop]
     ans@ae <- x@ae[i,j,,drop=drop]
     ans
+})
+
+setMethod('pgex_experiment', list(x="PGEXContainerProto"), function(x){
+    x@pgex_experiment
+})
+
+setReplaceMethod('pgex_experiment', list(x="PGEXContainerProto", value='PGEXExperimentMeta'), function(x, value){
+    x@pgex_experiment <- value
+    x
 })

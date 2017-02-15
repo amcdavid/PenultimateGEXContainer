@@ -17,5 +17,5 @@
 "16","cell_size_um","numeric",NA,NA,NA,"size of cells in um",NA,NA,"pgex_cell_size_um"
 "17","fastq_sra_pointer","url",NA,NA,NA,"url with link to sra or fastq file for this sample",NA,NA,"pgex_fastq_sra_pointer"
 "18","processing_kv","6","reads;molecules;prop_genome;prop_genic;prop_unique;prop_unique_genic","numeric",NA,"containing quality information perhaps derived from the sample processing pipeline",NA,NA,"pgex_processing_kv"
-"19","filter_good_study","logical",NA,NA,TRUE,"Was this sample kept in the study for final analysis",NA,NA,"pgex_filter_good_study"
+"19","filter_study_pass","logical",NA,NA,TRUE,"Was this sample kept in the study for final analysis",NA,NA,"pgex_filter_study_pass"
 "20","filter_kv","key-value","character","logical",NA,"key-values for other filtration criteria",NA,NA,"pgex_filter_kv"

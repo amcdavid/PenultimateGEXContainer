@@ -1,16 +1,16 @@
 Package: PenultimateGEXContainer
 Title: Penultimate gene expression container: An interface for interchange of gene expression data
-Version: 0.10
+Version: 0.20
 Authors@R: person("Andrew", "McDavid", email = "Andrew_McDavid@urmc.rochester.edu", role = c("aut", "cre"))
 Description: Although there are several good classes for storing gene expression data, in many cases it's not ideal to pass around serialized versions of these classes.  The package is meant for intermediate storage/exchange of gene expression data, sample and feature covariates.  It will (eventually) support idempotent import/export from HDF5, comma-separated value files, and perhaps ArrayExpress/GEO formats.  Emphasis is placed on harmonizing covariates between studies, so a controlled vocabulary will be made available and use encouraged.
 Depends: R (>= 3.3.2)
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-Imports: SummarizedExperiment, rhdf5, data.table, BiocGenerics, S4Vectors, Biobase, methods
+Imports: SummarizedExperiment, rhdf5, data.table, BiocGenerics, S4Vectors, Biobase, methods, stringr
 Suggests: knitr,
     rmarkdown,
     testthat,
     googlesheets
 VignetteBuilder: knitr
-RoxygenNote: 6.0.0
+RoxygenNote: 6.0.1

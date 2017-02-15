@@ -14,6 +14,7 @@ vignette: >
 library(Biobase)
 library(ArrayExpress)
 library(GEOquery)
+library(SummarizedExperiment)
 habib_ae = getAE('GSE85721')
 sdrf <- Biobase::read.AnnotatedDataFrame(habib_ae$sdrf, habib_ae$path,  blank.lines.skip = TRUE, fill = TRUE, varMetadata.char = "$", quote = "\"")
 expdat = ArrayExpress:::readExperimentData(habib_ae$idf, habib_ae$path)
