@@ -7,5 +7,6 @@
 "6","molecule","4","polyA RNA;total RNA;nuclear RNA;cytoplasmic RNA",NA,TRUE,"What type of RNA was selected/sequenced?","Sample_molecule_ch",NA,"pgex_molecule"
 "7","geo_accession","character",NA,NA,FALSE,"Gene expression omnibus accession id (GSEXXXX)","geo_accession",NA,"pgex_geo_accession"
 "8","arrayexpress_accession","character",NA,NA,FALSE,"ArrayExpress id (GEOD-XXXX etc)",NA,NA,"pgex_arrayexpress_accession"
-"9","pmid_accession","character",NA,NA,FALSE,"Pubmed publication ID (PMIDXXXXX)","Series_pubmed_id","PubMed ID","pgex_pmid_accession"
+"9","pmid_accession","integer",NA,NA,FALSE,"Pubmed publication ID (PMIDXXXXX)","Series_pubmed_id","PubMed ID","pgex_pmid_accession"
 "10","is_public","logical",NA,NA,TRUE,"Is this data publicly available?",NA,NA,"pgex_is_public"
+"11","transformation","2","shifted log2;counts",NA,TRUE,"What transformation has been applied to the main expression data?",NA,NA,"pgex_transformation"

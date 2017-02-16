@@ -33,7 +33,7 @@ PGEXContainerProto <- function(summarizedExperiment=NULL, pgex_experiment=NULL, 
     MIAMEed <- NULL
     if(length(whichMIAME <- which_MIAME(metadata(summarizedExperiment)))>0){
         MIAMEed <- metadata(summarizedExperiment)[[whichMIAME]]
-        metadata(summarizedExperiment)[[which(hasMIAME)]] <- NULL
+        metadata(summarizedExperiment)[[whichMIAME]] <- NULL
     }
 
     if(!is.null(pgex_sample)){
@@ -61,6 +61,7 @@ cbind_unique <- function(...){
 }
 
 which_MIAME <- function(x){
+    if(length(x)==0) return(integer(0))
     emptyMIAME <- MIAME()
     which(sapply(x, function(y) inherits(y, 'MIAME') && !all.equal(y, emptyMIAME)))
 }

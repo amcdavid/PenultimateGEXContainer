@@ -27,6 +27,8 @@ PGEX_promote(obj)
 \item{fdata}{feature data (ignored)}
 
 \item{exprs}{expression data (ignored)}
+
+\item{obj}{\code{PGEXContainerProto}}
 }
 \value{
 object of class \code{PGEXContainerProto}
@@ -70,7 +72,7 @@ cell_cycle_maybe <- colData(se)$characteristics_ch1.3
 pgex_sample <- DataFrame(pgex_batch=batch, pgex_biosample=biosample, pgex_ncells=ncells, pgex_filter_study_pass=TRUE)
 pgex_experiment <- list(pgex_platform='cell_ina_well', pgex_chemistry='3prime polyA tailing',
                         pgex_has_umi=FALSE, pgex_ercc_version=NA, pgex_molecule='polyA RNA',
-                        pgex_is_public=TRUE)
+                        pgex_is_public=TRUE, pgex_transformation=NA)
 proto <- PGEXContainerProto(se, geo_soft=colData(se), pgex_sample=pgex_sample, pgex_experiment=pgex_experiment)
 PGEX_promote(proto)
 }
