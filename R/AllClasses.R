@@ -25,7 +25,7 @@ setClass('PGEXExperimentMeta', contains='list', validity=.PGEXExperimentMetaVali
 ##' @importClassesFrom Biobase MIAME
 ##' @import S4Vectors SummarizedExperiment
 setClass('PGEXContainerProto',
-         contains='SummarizedExperiment0',
+         contains='SummarizedExperiment',
          representation=list(pgex_version='character', geo='DataFrame', ae='DataFrame', MIAMEed='MIAMEOrNULL',
                              pgex_experiment='PGEXExperimentMeta'),
          prototype=list(pgex_version=as.character(packageVersion('PenultimateGEXContainer'))),

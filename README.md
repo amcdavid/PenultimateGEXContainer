@@ -1,8 +1,8 @@
 # PenultimateGEXContainer
-Although there are several good classes for storing gene expression data, in many cases it's not ideal to share serialized versions of these classes.  The package is meant for intermediate storage/exchange of gene expression data, sample and feature covariates.  It will (eventually) support idempotent conversion to/from HDF5, text files and GEO formats.  Emphasis is placed on harmonizing covariates between studies, so a controlled vocabulary will be made available and use encouraged.  It's design case was for single cell gene expression experiments, but is hoped that it will be useful in other contexts.
+Although there are several good classes for storing gene expression data, in many cases it's not ideal to share serialized versions of these classes.  The package is meant for intermediate storage/exchange of gene expression data, sample, feature covariates and pointers to raw data.  It maybe (eventually) will support idempotent conversion to/from HDF5, text files and GEO formats.  Emphasis is placed on harmonizing covariates between studies, so a controlled vocabulary is available and use encouraged.  Its design case was for single cell gene expression experiments, but is hoped that it will be useful in other contexts.
 
-## How dreadfully banal. Why attempt to define another format?
-Good question.  MAGE-TAB is getting pretty creaky.  GEO/SOFT format almost works, but only for sample-level covariates.  It requires some abuse to model cells, and many datasets only offer a link to the processed data now. Both of these are also missing some important (to me) experiment and sample level covariates.
+## How dreadfully banal. Why attempt to define another architecture?
+Good question.  MAGE-TAB is getting pretty creaky.  GEO/SOFT format almost works, but only for sample-level covariates.  It requires some abuse to model cells, and many datasets only offer a link to the processed data now. Both of these are also missing some important (to me) experiment and sample-level covariates.
 
 ### Alternatives
 - Status quo: ad hockery abounds. Text formats with various headers or whatever happened to be uploaded onto GEO.
